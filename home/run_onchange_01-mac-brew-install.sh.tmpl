@@ -1,0 +1,20 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -e
+
+brew update >/dev/null 2>&1
+brew bundle --file=/dev/stdin <<EOF
+{{ range $profile := .packageProfiles -}}
+{{ range index $.packages.darwin.taps $profile -}}
+tap {{ . | quote }}
+{{ end -}}
+{{ range index $.packages.darwin.brews $profile -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ range index $.packages.darwin.casks $profile -}}
+cask {{ . | quote }}
+{{ end -}}
+{{ end -}}
+EOF
+{{ end -}}
+

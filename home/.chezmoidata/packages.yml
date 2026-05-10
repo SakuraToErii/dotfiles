@@ -1,0 +1,77 @@
+packages:
+  darwin:
+    taps:
+        base:
+            - brewforge/chinese
+            - deskflow/tap
+            - tw93/tap
+        work:
+            - jundot/omlx
+
+    brews:
+        base:
+            - bat
+            - bottom
+            - cmake
+            - eza
+            - fastfetch
+            - fd
+            - ffmpeg
+            - fnm
+            - fzf
+            - gh
+            - git-lfs
+            - imagemagick
+            - lazygit
+            - macmon
+            - mas
+            - neovim
+            - pandoc
+            - rtk
+            - starship
+            - tw93/tap/mole
+            - uv
+            - wget
+            - yazi
+            - yt-dlp
+            - zoxide
+            - zsh-autosuggestions
+            - zsh-syntax-highlighting
+            
+        work:
+            - jundot/omlx/omlx
+            - xcodegen
+ 
+    casks:
+        base:
+            - claude-code
+            - coteditor
+            - deskflow
+            - easytier-gui
+            - font-fira-code-nerd-font
+            - font-hack-nerd-font
+            - font-monocraft
+            - font-noto-serif-cjk-sc
+            - font-victor-mono-nerd-font
+            - firefox
+            - ghostty
+            - karabiner-elements
+            - loop
+            - miniforge
+            - mactex
+            - miaoyan
+            - obsidian
+            - playcover-community
+            - pearcleaner
+            - rustdesk
+            - tomatobar
+            - xournal++
+
+        work:
+            - orbstack
+            - zotero
+            
+        dev:
+            - mujoco
+            - zulu@21
+

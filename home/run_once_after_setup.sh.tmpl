@@ -1,0 +1,114 @@
+#!/bin/bash
+sudo -v                                                                                                                   # asks for sudo password upfront
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &                                           # keep alive: update sudo time stamp until the script has finished
+
+set -e
+touch $HOME/.hushlogin
+
+ICLOUD_BACKUP="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Backup"
+mkdir -p "$ICLOUD_BACKUP"
+APP_PREFS_DIR="$ICLOUD_BACKUP/AppPreferences"
+
+
+# Restore my App Preferences
+defaults import com.lwouis.alt-tab-macos "$APP_PREFS_DIR/alttab.plist"
+defaults import com.if.Amphetamine "$APP_PREFS_DIR/amphetamine.plist"
+defaults import pl.maketheweb.cleanshotx "$APP_PREFS_DIR/cleanshotx.plist"
+defaults import com.knollsoft.Rectangle "$APP_PREFS_DIR/rectangle.plist"
+defaults import com.raycast.macos "$APP_PREFS_DIR/raycast.plist"
+
+# macOS config
+{{- if eq .chezmoi.os "darwin" -}}
+
+# General settings
+sudo pmset -a lowpowermode 0                                                                                             # low power mode never
+defaults write com.apple.LaunchServices "LSQuarantine" -bool false                                                       # disable app quarantine
+defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40                                      # increase Bluetooth sound quality
+
+# Language and region settings
+defaults write NSGlobalDomain AppleLanguages -array "en-US"                                                              # set languages
+defaults write NSGlobalDomain AppleLocale -string "en_US@currency=USD"                                                   # set locale and currency
+defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"                                                # set measurement units
+defaults write NSGlobalDomain AppleMetricUnits -bool true
+defaults write NSGlobalDomain AppleTemperatureUnit -string "Celsius"                                                     # set temperature unit
+
+# Time and Date settings
+defaults write NSGlobalDomain AppleLocale -string "en_US@currency=USD"                                                   # set country as United States
+defaults write NSGlobalDomain AppleICUForce24HourTime -bool true                                                         # 24-hour time format
+defaults write com.apple.menuextra.clock "ShowAMPM" -bool false                                                          # remove AM/PM from time display
+defaults write NSGlobalDomain AppleFirstWeekday -dict gregorian 2                                                        # set Monday as first weekday
+defaults write NSGlobalDomain AppleICUDateFormatStrings -dict 1 "yyyy-MM-dd"                                             # date format
+defaults write NSGlobalDomain AppleICUNumberFormat -string "#,##0.###"                                                   # number format
+
+
+# Menu Bar settings
+# 菜单栏：隐藏 AirDrop、AirPlay、隔空播放显示器、勿扰模式和声音图标
+for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
+  defaults write "${domain}" dontAutoLoad -array "/System/Library/CoreServices/Menu Extras/AirDrop.menu" \
+  "/System/Library/CoreServices/Menu Extras/AirPlay.menu" "/System/Library/CoreServices/Menu Extras/AirPlayDisplay.menu" \
+  "/System/Library/CoreServices/Menu Extras/DoNotDisturb.menu" "/System/Library/CoreServices/Menu Extras/Sound.menu"
+done
+# 菜单栏：显示时间机器图标
+defaults write com.apple.systemuiserver menuExtras -array "/System/Library/CoreServices/Menu Extras/TimeMachine.menu"
+defaults write com.apple.controlcenter "NSStatusItem Visible AirPlayDisplay" -bool false                                  # 默认隐藏隔空播放显示器图标
+defaults write com.apple.controlcenter "NSStatusItem AirPlayDisplayMode" -bool true                                       # 隔空播放显示器激活时显示图标
+defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool false                                           # 默认隐藏声音图标
+defaults write com.apple.controlcenter "NSStatusItem SoundMode" -bool true                                                # 声音状态激活时显示图标
+defaults write com.apple.menuextra.battery ShowPercent -string "NO"                                                       # 不显示电池百分比
+defaults write com.apple.dock autohide-menu-bar-in-fullscreen -bool true                                                  # 全屏时自动隐藏菜单栏
+
+# Dock 设置
+defaults write com.apple.dock tilesize -int 32                                                                            # 设置 Dock 图标大小
+defaults write com.apple.dock magnification -bool true                                                                    # 启用 Dock 图标放大
+defaults write com.apple.dock largesize -int 55                                                                           # 设置 Dock 图标放大后的大小
+defaults write com.apple.dock mineEffect -string "genie"                                                                  # 设置窗口最小化动画为 Genie
+defaults write com.apple.dock minimize-to-application -bool true                                                          # 将窗口最小化到应用图标
+defaults write com.apple.dock autohide -bool true                                                                         # 启用 Dock 自动隐藏
+defaults write com.apple.dock autohide-delay -float 0                                                                     # 自动隐藏无延迟
+defaults write com.apple.dock launchanim -bool true                                                                       # 启用应用启动动画
+defaults write com.apple.stageManager enabled -bool false                                                                 # 关闭台前调度
+defaults write com.apple.dock show-process-indicators -bool true                                                          # 显示已打开应用的指示点
+defaults write com.apple.dock show-recents -bool false                                                                    # 隐藏最近使用的应用
+
+# 触控板设置
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true                                     # 启用轻点点按
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1                                             # 为当前主机启用轻点点按
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1                                                          # 全局启用轻点点按
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad ForceClick -bool true                                   # 启用用力点按
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad HapticFeedback -bool true                               # 启用触觉反馈
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad SoftClick -bool true                                    # 启用静音点按
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true                           # 启用右键点按
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerClick -bool true                       # 启用双指右键点按
+defaults write -g InitialKeyRepeat -int 13                                                                                # 控制开始重复前的等待时间
+defaults write -g KeyRepeat        -int 2                                                                                 # 控制重复速度，越小越好
+
+# 软件更新设置
+sudo softwareupdate --schedule on                                                                                         # 启用软件更新自动检查计划
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true                        # 启用自动检查更新
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false                           # 启用自动下载更新
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticallyInstallMacOSUpdates -bool false            # 启用自动安装 macOS 更新
+sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate CriticalUpdateInstall -bool true                        # 启用自动安装关键安全更新
+defaults write com.apple.commerce AutoUpdate -bool true                                                                   # 启用 App Store 应用自动更新
+defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1                                                          # 每天检查更新
+defaults write com.apple.SoftwareUpdate ConfigDataInstall -int 1                                                          # 启用自动安装系统数据文件
+defaults write com.apple.commerce AutoUpdateRestartRequired -bool true                                                    # 启用需要重启的更新自动安装
+
+
+# Finder settings
+defaults write com.apple.finder AppleShowAllFiles -bool false                                                             # 默认情况下，不要显示隐藏的文件。
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true                                                           # show all filename extensions
+defaults write com.apple.finder ShowPathbar -bool true                                                                    # show path bar
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"                                                       # search in current folder by default
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false                                                # disable change file extension warning
+
+# Apply changes
+killall SystemUIServer                                                                                                    # restart SystemUIServer
+killall Dock                                                                                                              # restart Dock
+killall NotificationCenter                                                                                                # restart NotificationCenter
+killall ControlCenter                                                                                                     # restart ControlCenter
+
+# Restore my Dock and Launchpad Preferences
+lporg load --icloud
+
+echo "The computer may need to restart for some changes to be reflected."
+{{ end -}}

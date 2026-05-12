@@ -1,24 +1,39 @@
+{{- if and (eq .chezmoi.os "darwin") (.runInitialSetup | default false) -}}
 #!/bin/bash
+
+# 只有初次运行脚本时才会跑这个脚本，由 ~/.config/chezmoi/chezmoi.toml 控制
 sudo -v                                                                                                                   # asks for sudo password upfront
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &                                           # keep alive: update sudo time stamp until the script has finished
 
 set -e
-touch $HOME/.hushlogin
+touch "$HOME/.hushlogin"
 
-ICLOUD_BACKUP="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Backup"
+ICLOUD_BACKUP="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Backup"
 mkdir -p "$ICLOUD_BACKUP"
 APP_PREFS_DIR="$ICLOUD_BACKUP/AppPreferences"
 
 
-# Restore my App Preferences
-defaults import com.lwouis.alt-tab-macos "$APP_PREFS_DIR/alttab.plist"
-defaults import com.if.Amphetamine "$APP_PREFS_DIR/amphetamine.plist"
-defaults import pl.maketheweb.cleanshotx "$APP_PREFS_DIR/cleanshotx.plist"
-defaults import com.knollsoft.Rectangle "$APP_PREFS_DIR/rectangle.plist"
-defaults import com.raycast.macos "$APP_PREFS_DIR/raycast.plist"
+# 恢复 mas 应用配置
+restore_pref() {
+  local domain="$1"
+  local file="$2"
+
+  if [ -f "$file" ]; then
+    defaults import "$domain" "$file"
+  else
+    echo "Preference backup missing: $file" >&2
+  fi
+}
+
+restore_pref com.tencent.xinWeChat "$APP_PREFS_DIR/wechat.plist"
+restore_pref cn.better365.iShotPro "$APP_PREFS_DIR/ishot.plist"
+restore_pref com.microsoft.Excel "$APP_PREFS_DIR/excel.plist"
+restore_pref com.microsoft.Word "$APP_PREFS_DIR/word.plist"
+restore_pref com.microsoft.Powerpoint "$APP_PREFS_DIR/ppt.plist"
+
+echo "plists restored"
 
 # macOS config
-{{- if eq .chezmoi.os "darwin" -}}
 
 # General settings
 sudo pmset -a lowpowermode 0                                                                                             # low power mode never
@@ -70,6 +85,11 @@ defaults write com.apple.stageManager enabled -bool false                       
 defaults write com.apple.dock show-process-indicators -bool true                                                          # 显示已打开应用的指示点
 defaults write com.apple.dock show-recents -bool false                                                                    # 隐藏最近使用的应用
 
+dockutil --remove all --no-restart
+dockutil --add "/System/Applications/Apps.app" --section apps --position end --no-restart
+dockutil --add "$HOME/Downloads" --section others --display folder --view auto --sort dateadded --position end --no-restart
+dockutil --add "/Applications" --section others --display folder --view auto --sort name --position end --no-restart
+
 # 触控板设置
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true                                     # 启用轻点点按
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1                                             # 为当前主机启用轻点点按
@@ -102,13 +122,33 @@ defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"             
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false                                                # disable change file extension warning
 
 # Apply changes
-killall SystemUIServer                                                                                                    # restart SystemUIServer
-killall Dock                                                                                                              # restart Dock
-killall NotificationCenter                                                                                                # restart NotificationCenter
-killall ControlCenter                                                                                                     # restart ControlCenter
+killall SystemUIServer 2>/dev/null || true                                                                                # restart SystemUIServer
+killall Dock 2>/dev/null || true                                                                                          # restart Dock
+killall NotificationCenter 2>/dev/null || true                                                                            # restart NotificationCenter
+killall ControlCenter 2>/dev/null || true                                                                                 # restart ControlCenter
 
-# Restore my Dock and Launchpad Preferences
-lporg load --icloud
+CHEZMOI_CONFIG_FILE="$HOME/.config/chezmoi/chezmoi.toml"
+tmpfile="$(mktemp)"
+
+last_line="$(tail -n 1 "$CHEZMOI_CONFIG_FILE")"
+case "$last_line" in
+  "runInitialSetup = true"|"runInitialSetup = false") ;;
+  *)
+    rm -f "$tmpfile"
+    echo "Expected runInitialSetup as the last line in $CHEZMOI_CONFIG_FILE" >&2
+    exit 2
+    ;;
+esac
+
+sed '$d' "$CHEZMOI_CONFIG_FILE" > "$tmpfile" || {
+  status="$?"
+  rm -f "$tmpfile"
+  echo "Could not read $CHEZMOI_CONFIG_FILE" >&2
+  exit "$status"
+}
+printf '%s\n' "runInitialSetup = false" >> "$tmpfile"
+
+mv "$tmpfile" "$CHEZMOI_CONFIG_FILE"
 
 echo "The computer may need to restart for some changes to be reflected."
 {{ end -}}

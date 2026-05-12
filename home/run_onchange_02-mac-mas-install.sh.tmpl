@@ -1,0 +1,33 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -e
+
+if ! command -v mas >/dev/null 2>&1; then
+  echo "mas is required. Install it with Homebrew first."
+  exit 1
+fi
+
+if ! installed_ids="$(mas list | awk '{print $1}')"; then
+  echo "mas cannot read installed apps. Sign in to the App Store, then run chezmoi apply again."
+  exit 1
+fi
+
+install_mas_app() {
+  local app_id="$1"
+  local app_name="$2"
+
+  if printf '%s\n' "$installed_ids" | grep -qx "$app_id"; then
+    echo "mas: $app_name already installed"
+  else
+    echo "mas: installing $app_name ($app_id)"
+    mas install "$app_id"
+    installed_ids="$(printf '%s\n%s\n' "$installed_ids" "$app_id")"
+  fi
+}
+
+{{ range $profile := .packageProfiles -}}
+{{ range index $.mas.darwin.apps $profile -}}
+install_mas_app {{ printf "%v" .id | quote }} {{ .name | quote }}
+{{ end -}}
+{{ end -}}
+{{ end -}}

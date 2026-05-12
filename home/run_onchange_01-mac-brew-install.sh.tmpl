@@ -2,8 +2,8 @@
 #!/bin/bash
 set -e
 
-brew update >/dev/null 2>&1
-brew bundle --file=/dev/stdin <<EOF
+brew update --quiet
+brew bundle --file=/dev/stdin --quiet <<EOF
 {{ range $profile := .packageProfiles -}}
 {{ range index $.packages.darwin.taps $profile -}}
 tap {{ . | quote }}
@@ -17,4 +17,3 @@ cask {{ . | quote }}
 {{ end -}}
 EOF
 {{ end -}}
-

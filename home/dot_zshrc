@@ -1,17 +1,17 @@
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Basic zsh behavior previously covered by Oh My Zsh.
 autoload -Uz compinit
 compinit
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
-setopt append_history
-setopt share_history
-setopt hist_ignore_dups
+HISTDUP=erase                                         # Erase duplicates in the history
+HIST_STAMPS="dd/mm/yyyy"                              # Display timestamps in history in the defined format
+setopt appendhistory                                  # Append new history items to the history file
+setopt sharehistory                                   # Share history between all sessions
+setopt incappendhistory                               # Append history incrementally (as commands are typed)
+setopt hist_ignore_all_dups                           # Ignore duplicate commands in the history
+setopt hist_save_no_dups                              # Do not save duplicate commands in the history
+setopt hist_ignore_dups                               # Ignore duplicate commands in the history
+setopt hist_find_no_dups                              # Do not display duplicates when searching the history
 
 alias v='nvim'
 alias lg='lazygit'

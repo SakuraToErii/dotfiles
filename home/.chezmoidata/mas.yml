@@ -1,0 +1,41 @@
+mas:
+  darwin:
+    apps:
+        base:
+            - id: 6447957425
+              name: Immersive Translate
+            - id: 6444322545
+              name: SingleFile
+            - id: 6738342400
+              name: Tampermonkey
+            - id: 836500024
+              name: WeChat
+            - id: 1662217862
+              name: Wipr
+            - id: 1611347086
+              name: iShot Pro
+
+        work:
+            - id: 1642252516
+              name: easyScholar
+            - id: 1519213509
+              name: iPreview
+            - id: 1484048379
+              name: TencentMeeting
+            - id: 462058435
+              name: Microsoft Excel
+            - id: 462062816
+              name: Microsoft PowerPoint
+            - id: 462054704
+              name: Microsoft Word
+            - id: 6474615359
+              name: MathCapture
+            - id: 1504416652
+              name: GeoGebra Calculator Suite
+            - id: 6444050820
+              name: Draw Things
+            - id: 6720708363
+              name: Obsidian Web Clipper
+
+
+

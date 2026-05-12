@@ -3,16 +3,18 @@ packages:
     taps:
         base:
             - brewforge/chinese
-            - deskflow/tap
             - tw93/tap
+            - farion1231/ccswitch
         work:
             - jundot/omlx
+            - deskflow/tap
 
     brews:
         base:
             - bat
             - bottom
             - cmake
+            - dockutil
             - eza
             - fastfetch
             - fd
@@ -44,9 +46,9 @@ packages:
  
     casks:
         base:
+            - cc-switch
             - claude-code
             - coteditor
-            - deskflow
             - easytier-gui
             - font-fira-code-nerd-font
             - font-hack-nerd-font
@@ -58,20 +60,22 @@ packages:
             - karabiner-elements
             - loop
             - miniforge
-            - mactex
-            - miaoyan
-            - obsidian
-            - playcover-community
+            - 'mactex-no-gui'
+            - orbstack
             - pearcleaner
             - rustdesk
-            - tomatobar
-            - xournal++
+
 
         work:
-            - orbstack
+            - deskflow
+            - playcover-community
+            - tomatobar
+            - miaoyan
+            - obsidian
+            - xournal++
             - zotero
+            
             
         dev:
             - mujoco
             - zulu@21
-

@@ -54,6 +54,7 @@ mkdir -p "$CHEZMOI_CONFIG_DIR"
     printf '"%s"' "${profiles[$i]}"
   done
   printf "]\n"
+  echo "runInitialSetup = true"
 } > "$CHEZMOI_CONFIG_FILE"
 
 echo "Generated $CHEZMOI_CONFIG_FILE"
@@ -63,4 +64,3 @@ echo "Sign in to App Store before proceeding."
 read -r -p "Press Enter to continue."
 
 chezmoi init --apply SakuraToErii
-

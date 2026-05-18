@@ -5,6 +5,7 @@ packages:
             - brewforge/chinese
             - tw93/tap
             - farion1231/ccswitch
+            - djetelina/tap
         work:
             - jundot/omlx
             - deskflow/tap
@@ -14,6 +15,7 @@ packages:
             - bat
             - bottom
             - cmake
+            - cheznav
             - dockutil
             - eza
             - fastfetch

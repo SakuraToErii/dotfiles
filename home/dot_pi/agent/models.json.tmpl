@@ -1,0 +1,12 @@
+{
+  "providers"{{ .chezmoi.pathListSeparator }} {
+    "omlx"{{ .chezmoi.pathListSeparator }} {
+      "baseUrl"{{ .chezmoi.pathListSeparator }} "http{{ .chezmoi.pathListSeparator }}{{ .chezmoi.pathSeparator }}{{ .chezmoi.pathSeparator }}localhost{{ .chezmoi.pathListSeparator }}9876{{ .chezmoi.pathSeparator }}v1",
+      "api"{{ .chezmoi.pathListSeparator }} "openai-completions",
+      "apiKey"{{ .chezmoi.pathListSeparator }} "2333",
+      "models"{{ .chezmoi.pathListSeparator }} [
+        { "id"{{ .chezmoi.pathListSeparator }} "Qwen3.6-35B-A3B-oQ4-fp16-mtp" },
+      ]
+    }
+  }
+}

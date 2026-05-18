@@ -84,6 +84,7 @@ defaults write com.apple.dock launchanim -bool true                             
 defaults write com.apple.stageManager enabled -bool false                                                                 # 关闭台前调度
 defaults write com.apple.dock show-process-indicators -bool true                                                          # 显示已打开应用的指示点
 defaults write com.apple.dock show-recents -bool false                                                                    # 隐藏最近使用的应用
+defaults write com.apple.dock workspaces-auto-swoosh -bool NO
 
 dockutil --remove all --no-restart
 dockutil --add "/System/Applications/Apps.app" --section apps --position end --no-restart

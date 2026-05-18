@@ -1,0 +1,6 @@
+# 防止供应链攻击
+min-release-age=3
+minimum-release-age=4320
+save-exact=true
+
+ignore-scripts=true

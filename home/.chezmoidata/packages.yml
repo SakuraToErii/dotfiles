@@ -7,7 +7,6 @@ packages:
             - farion1231/ccswitch
             - djetelina/tap
         work:
-            - jundot/omlx
             - deskflow/tap
 
     brews:
@@ -43,7 +42,6 @@ packages:
             - zsh-syntax-highlighting
             
         work:
-            - jundot/omlx/omlx
             - xcodegen
  
     casks:
